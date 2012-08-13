@@ -25,7 +25,7 @@ package net.messagepack {
         public static const MAP16 : uint = 0xDE;
         public static const MAP32 : uint = 0xDF;
 
-        public static const NULL : uint = 0xC0;
+        public static const NIL : uint = 0xC0;
         public static const TRUE : uint = 0xC3;
         public static const FALSE : uint = 0xC2;
     }

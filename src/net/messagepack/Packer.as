@@ -38,9 +38,9 @@ package net.messagepack {
                 packNull();
             else if (value is Boolean)
                 packBool(value);
-            else if (value is uint && value <= uint.MAX_VALUE && value >= uint.MIN_VALUE)
+            else if (value is uint && value <= uint(4294967295) && value >= uint(0))
                 packUInt(value);
-            else if (value is int && value <= int.MAX_VALUE && value >= int.MIN_VALUE)
+            else if (value is int && value <= int(2147483647) && value >= int(-2147483648))
                 packInt(value);
             else if (value is Number)
                 packNumber(value);
@@ -218,7 +218,7 @@ package net.messagepack {
         }
 
         public function packNull() : Packer {
-            _sink.writeByte(MessagePackTag.NULL);
+            _sink.writeByte(MessagePackTag.NIL);
             return this;
         }    
     }

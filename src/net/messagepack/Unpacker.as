@@ -1,4 +1,5 @@
 package net.messagepack {
+    import com.adobe.utils.IntUtil;
     import flash.utils.ByteArray;
     import flash.utils.Dictionary;
     import flash.utils.Endian;
@@ -28,7 +29,7 @@ package net.messagepack {
         public function unpack() : * {
             const header : uint = readHeader();
             switch (header) {
-            case MessagePackTag.NULL:
+            case MessagePackTag.NIL:
                 return null;
             case MessagePackTag.TRUE:
                 return true;
@@ -57,21 +58,21 @@ package net.messagepack {
             case MessagePackTag.RAW32:
                 return unpackRawImpl(header);
             }
-            if (header & 0x80 == 0)
+            if ((header & 0x80) == 0)
                 return header;
-            if (header & 0xE0 == 0xE0)
+            if ((header & 0xE0) == 0xE0)
                 return header & 0x1F;
-            if (header & 0xE0 == 0xA0)
+            if ((header & 0xE0) == 0xA0)
                 return unpackRawImpl(header);
-            if (header & 0xF0 == 0x90)
+            if ((header & 0xF0) == 0x90)
                 return unpackArrayImpl(header);
-            if (header & 0xF0 == 0x80)
+            if ((header & 0xF0) == 0x80)
                 return unpackDictImpl(header);
         }
 
         public function unpackString() : String {
             const header : uint = readHeader();
-            if (header == MessagePackTag.NULL)
+            if (header == MessagePackTag.NIL)
                 return null;
 
             const length : uint = beginRawImpl(header);
@@ -95,7 +96,7 @@ package net.messagepack {
                 case MessagePackTag.RAW32:
                     checkBytesAvaliable(4);
                     return _source.readUnsignedInt();
-                case MessagePackTag.NULL:
+                case MessagePackTag.NIL:
                     break;
                 default:
                     unexpectedHeader(header);
@@ -104,7 +105,7 @@ package net.messagepack {
         }
 
         private function unpackRawImpl(header : uint, bytes : ByteArray = null) : ByteArray {
-            if (header == MessagePackTag.NULL)
+            if (header == MessagePackTag.NIL)
                 return null;
 
             if (bytes == null)
@@ -128,7 +129,7 @@ package net.messagepack {
 
         public function unpackNull() : * {
             const header : uint = readHeader();
-            if (header == MessagePackTag.NULL)
+            if (header == MessagePackTag.NIL)
                 return null;
             unexpectedHeader(header);
         }
@@ -250,7 +251,7 @@ package net.messagepack {
                 case MessagePackTag.ARRAY32:
                     checkBytesAvaliable(4);
                     return _source.readUnsignedInt();
-                case MessagePackTag.NULL:
+                case MessagePackTag.NIL:
                     break;
                 default:
                     unexpectedHeader(header);
@@ -259,7 +260,7 @@ package net.messagepack {
         }
 
         private function unpackArrayImpl(header : uint, array : Array = null) : Array {
-            if (header == MessagePackTag.NULL)
+            if (header == MessagePackTag.NIL)
                 return null;
 
             if (array == null)
@@ -295,7 +296,7 @@ package net.messagepack {
                 case MessagePackTag.MAP32:
                     checkBytesAvaliable(4);
                     return _source.readUnsignedInt();
-                case MessagePackTag.NULL:
+                case MessagePackTag.NIL:
                     break;
                 default:
                     unexpectedHeader(header);
@@ -304,7 +305,7 @@ package net.messagepack {
         }
 
         private function unpackDictImpl(header : uint, dictionary : Dictionary = null) : Dictionary {
-            if (header == MessagePackTag.NULL)
+            if (header == MessagePackTag.NIL)
                 return null;
 
             if (dictionary == null)
@@ -340,7 +341,7 @@ package net.messagepack {
         }
 
         private function unexpectedHeader(header : uint) : void {
-            throw new MessagePackError("Unexpected header: " + header.toString(16));
+            throw new MessagePackError("Unexpected header: " + IntUtil.toHex(header, true));
         }
     }
 }

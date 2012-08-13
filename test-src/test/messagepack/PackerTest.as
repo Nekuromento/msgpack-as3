@@ -10,7 +10,7 @@ package test.messagepack {
         [Test]
         public function testUniqueValues() : void {
             const result : Array =
-                [MessagePackTag.NULL, MessagePackTag.TRUE, MessagePackTag.FALSE];
+                [MessagePackTag.NIL, MessagePackTag.TRUE, MessagePackTag.FALSE];
             const bytes : ByteArray = new ByteArray();
             const packer : Packer = new Packer(bytes);
             packer.pack(null, true, false);
