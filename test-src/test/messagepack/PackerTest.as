@@ -1,17 +1,19 @@
-package test {
+package test.messagepack {
     import flexunit.framework.Assert;
 
-    import net.messagepack.MessagePack;
+    import net.messagepack.Packer;
     import net.messagepack.MessagePackTag;
 
     import flash.utils.ByteArray;
 
-    public class MessagePackTest {
+    public class PackerTest {
         [Test]
         public function testUniqueValues() : void {
             const result : Array =
                 [MessagePackTag.NULL, MessagePackTag.TRUE, MessagePackTag.FALSE];
-            const bytes : ByteArray = MessagePack.pack(null, true, false);
+            const bytes : ByteArray = new ByteArray();
+            const packer : Packer = new Packer(bytes);
+            packer.pack(null, true, false);
             Assert.assertEquals(bytes.length, result.length);
             for (var i : uint = 0; i < bytes.length; ++i)
                 Assert.assertEquals(bytes[i], result[i]);
@@ -30,7 +32,9 @@ package test {
                 const testValues : Array = tests[i];
                 for (var j : uint = 0; j < testValues.length; ++j) {
                     const value : Array = testValues[j];
-                    const bytes : ByteArray = MessagePack.pack(value[1] & masks[i]);
+                    const bytes : ByteArray = new ByteArray();
+                    const packer : Packer = new Packer(bytes);
+                    packer.pack(value[1] & masks[i]);
 
                     Assert.assertEquals(bytes[0], value[0]);
 
@@ -66,7 +70,9 @@ package test {
                 const testValues : Array = tests[i];
                 for (var j : uint = 0; j < testValues.length; ++j) {
                     const value : Array = testValues[j];
-                    const bytes : ByteArray = MessagePack.pack(value[1]);
+                    const bytes : ByteArray = new ByteArray();
+                    const packer : Packer = new Packer(bytes);
+                    packer.pack(value[1]);
 
                     Assert.assertEquals(bytes[0], value[0]);
 
@@ -92,7 +98,9 @@ package test {
 
         [Test]
         public function testNumber() : void {
-            const bytes : ByteArray = MessagePack.pack(Number.MAX_VALUE);
+            const bytes : ByteArray = new ByteArray();
+            const packer : Packer = new Packer(bytes);
+            packer.pack(Number.MAX_VALUE);
             Assert.assertEquals(bytes.length, 9);
             Assert.assertEquals(bytes[0], MessagePackTag.DOUBLE);
             bytes.position = 1;
@@ -107,7 +115,8 @@ package test {
             for (var i : uint = 0; i < testValues.length; ++i) {
                 const value : Array = testValues[i];
                 const bytes : ByteArray = new ByteArray();
-                MessagePack.beginArray(i ? value[1] : 8, bytes);
+                const packer : Packer = new Packer(bytes);
+                packer.beginArray(i ? value[1] : 8);
 
                 Assert.assertEquals(bytes[0], value[0]);
 
@@ -138,7 +147,8 @@ package test {
             for (var i : uint = 0; i < testValues.length; ++i) {
                 const value : Array = testValues[i];
                 const bytes : ByteArray = new ByteArray();
-                MessagePack.beginMap(i ? value[1] : 8, bytes);
+                const packer : Packer = new Packer(bytes);
+                packer.beginMap(i ? value[1] : 8);
 
                 Assert.assertEquals(bytes[0], value[0]);
 
@@ -169,7 +179,8 @@ package test {
             for (var i : uint = 0; i < testValues.length; ++i) {
                 const value : Array = testValues[i];
                 const bytes : ByteArray = new ByteArray();
-                MessagePack.beginRaw(i ? value[1] : 8, bytes);
+                const packer : Packer = new Packer(bytes);
+                packer.beginRaw(i ? value[1] : 8);
 
                 Assert.assertEquals(bytes[0], value[0]);
 
