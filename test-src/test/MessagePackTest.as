@@ -101,7 +101,95 @@ package test {
         
         [Test]
         public function testArray() : void {
-            Assert.fail("Test not implemented");
+            const testValues : Array = [[MessagePackTag.ARRAY | 8, MessagePackTag.ARRAY | 8],
+                                        [MessagePackTag.ARRAY16, 65535],
+                                        [MessagePackTag.ARRAY32, uint.MAX_VALUE]];
+            for (var i : uint = 0; i < testValues.length; ++i) {
+                const value : Array = testValues[i];
+                const bytes : ByteArray = new ByteArray();
+                MessagePack.beginArray(i ? value[1] : 8, bytes);
+
+                Assert.assertEquals(bytes[0], value[0]);
+
+                var result : uint = 0;
+                switch (i) {
+                case 0:
+                    Assert.assertEquals(bytes.length, 1);
+                    Assert.assertEquals(bytes[0], value[1]);
+                    break;
+                case 1:
+                    Assert.assertEquals(bytes.length, 3);
+                    result = bytes[1] << 8 | bytes[2];
+                    Assert.assertEquals(result, value[1]);
+                    break;
+                default:
+                    Assert.assertEquals(bytes.length, 5);
+                    result = bytes[1] << 24 | bytes[2] << 16 | bytes[3] << 8 | bytes[4];
+                    Assert.assertEquals(result, value[1]);
+                }
+            }
+        }
+
+        [Test]
+        public function testMap() : void {
+            const testValues : Array = [[MessagePackTag.MAP | 8, MessagePackTag.MAP | 8],
+                                        [MessagePackTag.MAP16, 65535],
+                                        [MessagePackTag.MAP32, uint.MAX_VALUE]];
+            for (var i : uint = 0; i < testValues.length; ++i) {
+                const value : Array = testValues[i];
+                const bytes : ByteArray = new ByteArray();
+                MessagePack.beginMap(i ? value[1] : 8, bytes);
+
+                Assert.assertEquals(bytes[0], value[0]);
+
+                var result : uint = 0;
+                switch (i) {
+                case 0:
+                    Assert.assertEquals(bytes.length, 1);
+                    Assert.assertEquals(bytes[0], value[1]);
+                    break;
+                case 1:
+                    Assert.assertEquals(bytes.length, 3);
+                    result = bytes[1] << 8 | bytes[2];
+                    Assert.assertEquals(result, value[1]);
+                    break;
+                default:
+                    Assert.assertEquals(bytes.length, 5);
+                    result = bytes[1] << 24 | bytes[2] << 16 | bytes[3] << 8 | bytes[4];
+                    Assert.assertEquals(result, value[1]);
+                }
+            }
+        }
+
+        [Test]
+        public function testRaw() : void {
+            const testValues : Array = [[MessagePackTag.RAW | 8, MessagePackTag.RAW | 8],
+                                        [MessagePackTag.RAW16, 65535],
+                                        [MessagePackTag.RAW32, uint.MAX_VALUE]];
+            for (var i : uint = 0; i < testValues.length; ++i) {
+                const value : Array = testValues[i];
+                const bytes : ByteArray = new ByteArray();
+                MessagePack.beginRaw(i ? value[1] : 8, bytes);
+
+                Assert.assertEquals(bytes[0], value[0]);
+
+                var result : uint = 0;
+                switch (i) {
+                case 0:
+                    Assert.assertEquals(bytes.length, 1);
+                    Assert.assertEquals(bytes[0], value[1]);
+                    break;
+                case 1:
+                    Assert.assertEquals(bytes.length, 3);
+                    result = bytes[1] << 8 | bytes[2];
+                    Assert.assertEquals(result, value[1]);
+                    break;
+                default:
+                    Assert.assertEquals(bytes.length, 5);
+                    result = bytes[1] << 24 | bytes[2] << 16 | bytes[3] << 8 | bytes[4];
+                    Assert.assertEquals(result, value[1]);
+                }
+            }
         }
     }
 }

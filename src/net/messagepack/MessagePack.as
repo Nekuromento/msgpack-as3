@@ -49,13 +49,7 @@ package net.messagepack {
                 throw MessagePackError("Unsupported type");
         }
 
-        private static function packRaw(value : ByteArray, bytes : ByteArray) : void {
-            const length : uint = value.length;
-            if (length == 0) {
-                packNull(bytes);
-                return;
-            }
-
+        public static function beginRaw(length : uint, bytes : ByteArray) : void {
             bytes.endian = Endian.BIG_ENDIAN;
             if (length < 32) {
                 //fixraw
@@ -70,10 +64,21 @@ package net.messagepack {
                 bytes.writeByte(MessagePackTag.RAW32);
                 bytes.writeUnsignedInt(length);
             }
+        }
+
+        public static function packRaw(value : ByteArray, bytes : ByteArray) : void {
+            const length : uint = value.length;
+            if (length == 0) {
+                packNull(bytes);
+                return;
+            }
+
+            beginRaw(length, bytes);
+            bytes.endian = Endian.BIG_ENDIAN;
             bytes.writeBytes(value);
         }
 
-        private static function packString(value : String, bytes : ByteArray) : void {
+        public static function packString(value : String, bytes : ByteArray) : void {
             const utf : ByteArray = new ByteArray();
             utf.writeUTFBytes(value);
             packRaw(utf, bytes);
@@ -83,14 +88,7 @@ package net.messagepack {
             value.toMessagePack(bytes);
         }
 
-        public static function packDict(value : Dictionary, bytes : ByteArray) : void {
-            const keys : Array = DictionaryUtil.getKeys(value);
-            const length : uint = keys.length;
-            if (length == 0) {
-                packNull(bytes);
-                return;
-            }
-
+        public static function beginMap(length : uint, bytes : ByteArray) : void {
             bytes.endian = Endian.BIG_ENDIAN;
             if (length < 16) {
                 //fixmap
@@ -105,20 +103,24 @@ package net.messagepack {
                 bytes.writeByte(MessagePackTag.MAP32);
                 bytes.writeUnsignedInt(length);
             }
+        }
 
+        public static function packDict(value : Dictionary, bytes : ByteArray) : void {
+            const keys : Array = DictionaryUtil.getKeys(value);
+            const length : uint = keys.length;
+            if (length == 0) {
+                packNull(bytes);
+                return;
+            }
+
+            beginMap(length, bytes);
             for (var i : uint = 0; i < length; ++i) {
                 packImpl(keys[i], bytes);
                 packImpl(value[keys[i]], bytes);
             }
         }
 
-        public static function packArray(value : Array, bytes : ByteArray) : void {
-            const length : uint = value.length;
-            if (length == 0) {
-                packNull(bytes);
-                return;
-            }
-
+        public static function beginArray(length : uint, bytes : ByteArray) : void {
             bytes.endian = Endian.BIG_ENDIAN;
             if (length < 16) {
                 //fixarray
@@ -133,7 +135,16 @@ package net.messagepack {
                 bytes.writeByte(MessagePackTag.ARRAY32);
                 bytes.writeUnsignedInt(length);
             }
+        }
 
+        public static function packArray(value : Array, bytes : ByteArray) : void {
+            const length : uint = value.length;
+            if (length == 0) {
+                packNull(bytes);
+                return;
+            }
+
+            beginArray(length, bytes);
             for each (var element : * in value)
                 packImpl(element, bytes);
         }
