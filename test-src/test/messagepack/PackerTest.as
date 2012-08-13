@@ -1,7 +1,6 @@
 package test.messagepack {
     import flexunit.framework.Assert;
 
-    import net.messagepack.IConvertableToMessagePack;
     import net.messagepack.MessagePackTag;
     import net.messagepack.Packer;
 

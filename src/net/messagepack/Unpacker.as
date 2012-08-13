@@ -26,16 +26,56 @@ package net.messagepack {
         }
 
         public function unpack() : * {
-            throw Error("Unimplemented");
-        }
-
-        public function unpackStringImpl(header : uint) : String {
-            throw Error("Unimplemented");
+            const header : uint = readHeader();
+            switch (header) {
+            case MessagePackTag.NULL:
+                return null;
+            case MessagePackTag.TRUE:
+                return true;
+            case MessagePackTag.FALSE:
+                return false;
+            case MessagePackTag.FLOAT:
+            case MessagePackTag.DOUBLE:
+                return unpackNumberImpl(header);
+            case MessagePackTag.INT8:
+            case MessagePackTag.INT16:
+            case MessagePackTag.INT32:
+            case MessagePackTag.INT64:
+                return unpackIntImpl(header);
+            case MessagePackTag.UINT8:
+            case MessagePackTag.UINT16:
+            case MessagePackTag.UINT32:
+            case MessagePackTag.UINT64:
+                return unpackUIntImpl(header);
+            case MessagePackTag.ARRAY16:
+            case MessagePackTag.ARRAY32:
+                return unpackArrayImpl(header);
+            case MessagePackTag.MAP16:
+            case MessagePackTag.MAP32:
+                return unpackDictImpl(header);
+            case MessagePackTag.RAW16:
+            case MessagePackTag.RAW32:
+                return unpackRawImpl(header);
+            }
+            if (header & 0x80 == 0)
+                return header;
+            if (header & 0xE0 == 0xE0)
+                return header & 0x1F;
+            if (header & 0xE0 == 0xA0)
+                return unpackRawImpl(header);
+            if (header & 0xF0 == 0x90)
+                return unpackArrayImpl(header);
+            if (header & 0xF0 == 0x80)
+                return unpackDictImpl(header);
         }
 
         public function unpackString() : String {
             const header : uint = readHeader();
-            return unpackStringImpl(header);
+            if (header == MessagePackTag.NULL)
+                return null;
+
+            const length : uint = beginRawImpl(header);
+            return _source.readUTFBytes(length);
         }
 
         public function beginRaw() : uint {
@@ -63,8 +103,7 @@ package net.messagepack {
             }
         }
 
-        public function unpackRaw(bytes : ByteArray = null) : ByteArray {
-            const header : uint = readHeader();
+        private function unpackRawImpl(header : uint, bytes : ByteArray = null) : ByteArray {
             if (header == MessagePackTag.NULL)
                 return null;
 
@@ -78,22 +117,24 @@ package net.messagepack {
             return bytes;
         }
 
+        public function unpackRaw(bytes : ByteArray = null) : ByteArray {
+            const header : uint = readHeader();
+            return unpackRawImpl(header, bytes);
+        }
+
         public function unpackObject(object : IConvertableFromMessagePack) : void {
             object.fromMessagePack(this);
         }
 
-        private function unpackNullImpl(header : uint) : * {
+        public function unpackNull() : * {
+            const header : uint = readHeader();
             if (header == MessagePackTag.NULL)
                 return null;
             unexpectedHeader(header);
         }
 
-        public function unpackNull() : * {
+        public function unpackBool() : Boolean {
             const header : uint = readHeader();
-            return unpackNullImpl(header);
-        }
-
-        private function unpackBoolImpl(header : uint) : Boolean {
             switch (header) {
             case MessagePackTag.TRUE:
                 return true;
@@ -102,11 +143,6 @@ package net.messagepack {
             default:
                 unexpectedHeader(header);
             }
-        }
-
-        public function unpackBool() : Boolean {
-            const header : uint = readHeader();
-            return unpackBoolImpl(header);
         }
  
         private function unpackUIntImpl(header : uint) : uint {
@@ -222,8 +258,7 @@ package net.messagepack {
             }
         }
 
-        public function unpackArray(array : Array = null) : Array {
-            const header : uint = readHeader();
+        private function unpackArrayImpl(header : uint, array : Array = null) : Array {
             if (header == MessagePackTag.NULL)
                 return null;
 
@@ -236,6 +271,11 @@ package net.messagepack {
                 array[i] = unpack();
 
             return array;
+        }
+
+        public function unpackArray(array : Array = null) : Array {
+            const header : uint = readHeader();
+            return unpackArrayImpl(header, array);
         }
 
         public function beginMap() : uint {
@@ -263,8 +303,7 @@ package net.messagepack {
             }
         }
 
-        public function unpackDict(dictionary : Dictionary = null) : Dictionary {
-            const header : uint = readHeader();
+        private function unpackDictImpl(header : uint, dictionary : Dictionary = null) : Dictionary {
             if (header == MessagePackTag.NULL)
                 return null;
 
@@ -279,6 +318,11 @@ package net.messagepack {
             }
 
             return dictionary;
+        }
+
+        public function unpackDict(dictionary : Dictionary = null) : Dictionary {
+            const header : uint = readHeader();
+            return unpackDictImpl(header, dictionary);
         }
 
         private function readHeader() : uint {
