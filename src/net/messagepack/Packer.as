@@ -66,8 +66,7 @@ package net.messagepack {
             } else if (length < (1 << 16)) {
                 //raw 16
                 _sink.writeByte(MessagePackTag.RAW16);
-                _sink.writeByte(length >> 8);
-                _sink.writeByte(length);
+                _sink.writeShort(length);
             } else {
                 //raw 32
                 _sink.writeByte(MessagePackTag.RAW32);
@@ -107,8 +106,7 @@ package net.messagepack {
             } else if (length < (1 << 16)) {
                 //map 16
                 _sink.writeByte(MessagePackTag.MAP16);
-                _sink.writeByte(length >> 8);
-                _sink.writeByte(length);
+                _sink.writeShort(length);
             } else {
                 //map 32
                 _sink.writeByte(MessagePackTag.MAP32);
@@ -139,8 +137,7 @@ package net.messagepack {
             } else if (length < (1 << 16)) {
                 //array 16
                 _sink.writeByte(MessagePackTag.ARRAY16);
-                _sink.writeByte(length >> 8);
-                _sink.writeByte(length);
+                _sink.writeShort(length);
             } else {
                 //array 32
                 _sink.writeByte(MessagePackTag.ARRAY32);
@@ -178,8 +175,7 @@ package net.messagepack {
                 } else if (value < -(1 << 7)) {
                     //int 16
                     _sink.writeByte(MessagePackTag.INT16);
-                    _sink.writeByte(value >> 8);
-                    _sink.writeByte(value);
+                    _sink.writeShort(value);
                 } else {
                     //uint 8
                     _sink.writeByte(MessagePackTag.INT8);
@@ -206,8 +202,7 @@ package net.messagepack {
                 if (value < (1 << 16)) {
                     //uint 16
                     _sink.writeByte(MessagePackTag.UINT16);
-                    _sink.writeByte(value >> 8);
-                    _sink.writeByte(value);
+                    _sink.writeShort(value);
                 } else {
                     //uint 32
                     _sink.writeByte(MessagePackTag.UINT32);

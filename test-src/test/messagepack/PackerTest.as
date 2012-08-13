@@ -1,8 +1,9 @@
 package test.messagepack {
     import flexunit.framework.Assert;
 
-    import net.messagepack.Packer;
+    import net.messagepack.IConvertableToMessagePack;
     import net.messagepack.MessagePackTag;
+    import net.messagepack.Packer;
 
     import flash.utils.ByteArray;
 
@@ -201,6 +202,21 @@ package test.messagepack {
                     Assert.assertEquals(result, value[1]);
                 }
             }
+        }
+
+        [Test]
+        public function testObject() : void {
+            const bytes : ByteArray = new ByteArray();
+            const packer : Packer = new Packer(bytes);
+
+            const object : PackableDummy = new PackableDummy();
+            packer.pack(object);
+
+            Assert.assertEquals(bytes.length, 6);
+            Assert.assertEquals(bytes[0], MessagePackTag.ARRAY | 1);
+            Assert.assertEquals(bytes[1], MessagePackTag.UINT32);
+            const result : uint = bytes[2] << 24 | bytes[3] << 16 | bytes[4] << 8 | bytes[5];
+            Assert.assertEquals(result, object.num);
         }
     }
 }

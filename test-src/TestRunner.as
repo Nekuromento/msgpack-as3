@@ -1,17 +1,16 @@
 package {
-    import flash.display.Sprite;
+    import test.messagepack.PackerTest;
+
     import org.flexunit.internals.TraceListener;
     import org.flexunit.runner.FlexUnitCore;
     import org.fluint.uiImpersonation.VisualTestEnvironmentBuilder;
-    import test.messagepack.PackerTest;
 
-
+    import flash.display.Sprite;
 
     public class TestRunner extends Sprite {
         private var core : FlexUnitCore;
 
         public function TestRunner() {
-
             // Launch your unit tests by right clicking within this class and select: Debug As > FDT SWF Application
             
             //Instantiate the core.
