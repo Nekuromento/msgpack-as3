@@ -102,6 +102,7 @@ package net.messagepack {
                     unexpectedHeader(header);
                 }
             }
+            return 0;
         }
 
         private function unpackRawImpl(header : uint, bytes : ByteArray = null) : ByteArray {
@@ -144,6 +145,7 @@ package net.messagepack {
             default:
                 unexpectedHeader(header);
             }
+            return false;
         }
  
         private function unpackUIntImpl(header : uint) : uint {
@@ -167,6 +169,7 @@ package net.messagepack {
                     unexpectedHeader(header);
                 }
             }
+            return 0;
         }
 
         public function unpackUInt() : uint {
@@ -208,6 +211,7 @@ package net.messagepack {
                     unexpectedHeader(header);
                 }
             }
+            return 0;
         }
 
         public function unpackInt() : int {
@@ -227,6 +231,7 @@ package net.messagepack {
             default:
                 unexpectedHeader(header);
             }
+            return 0;
         }
 
         public function unpackNumber() : Number {
@@ -257,6 +262,7 @@ package net.messagepack {
                     unexpectedHeader(header);
                 }
             }
+            return 0;
         }
 
         private function unpackArrayImpl(header : uint, array : Array = null) : Array {
@@ -302,6 +308,7 @@ package net.messagepack {
                     unexpectedHeader(header);
                 }
             }
+            return 0;
         }
 
         private function unpackDictImpl(header : uint, dictionary : Dictionary = null) : Dictionary {
