@@ -209,7 +209,7 @@ package test.messagepack {
             const bytes : ByteArray = new ByteArray();
             const packer : Packer = new Packer(bytes);
 
-            const object : PackableDummy = new PackableDummy();
+            const object : Dummy = new Dummy();
             packer.pack(object);
 
             assertThat(bytes.length, equalTo(6));

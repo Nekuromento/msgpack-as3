@@ -1,5 +1,6 @@
 package net.messagepack {
     import com.adobe.utils.IntUtil;
+
     import flash.utils.ByteArray;
     import flash.utils.Dictionary;
     import flash.utils.Endian;
@@ -112,9 +113,9 @@ package net.messagepack {
             if (bytes == null)
                 bytes = new ByteArray();
 
+            _source.endian = Endian.BIG_ENDIAN;
             const length : uint = beginRawImpl(header);
-            for (var i : uint = 0; i < length; ++i)
-                bytes.writeByte(_source.readByte());
+            _source.readBytes(bytes, 0, length);
 
             return bytes;
         }

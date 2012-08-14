@@ -7,6 +7,7 @@ package test.messagepack {
     import org.hamcrest.assertThat;
     import org.hamcrest.collection.array;
     import org.hamcrest.collection.arrayWithSize;
+    import org.hamcrest.core.allOf;
     import org.hamcrest.core.isA;
     import org.hamcrest.object.equalTo;
     import org.hamcrest.object.nullValue;
@@ -116,10 +117,35 @@ package test.messagepack {
 
         [Test]
         public function testRaw() : void {
+            const bytes : ByteArray = new ByteArray();
+            const packer : Packer = new Packer(bytes);
+            const byteArray : ByteArray = new ByteArray();
+            byteArray.writeDouble(3.14);
+            byteArray.writeInt(314);
+            byteArray.writeUTF("тест");
+            packer.pack("test", byteArray);
+
+            bytes.position = 0;
+            const unpacker : Unpacker = new Unpacker(bytes);
+            assertThat(unpacker.unpack(),
+                       allOf(isA(ByteArray), equalTo("test")));
+            assertThat(String(unpacker.unpack()), equalTo(String(byteArray)));
         }
 
         [Test]
         public function testObject() : void {
+            const bytes : ByteArray = new ByteArray();
+            const packer : Packer = new Packer(bytes);
+
+            const p : Dummy = new Dummy();
+            packer.pack(p);
+
+            bytes.position = 0;
+            const unpacker : Unpacker = new Unpacker(bytes);
+            const o : Dummy = new Dummy();
+            unpacker.unpackObject(o);
+
+            assertThat(o.num, equalTo(p.num));
         }
     }
 }
