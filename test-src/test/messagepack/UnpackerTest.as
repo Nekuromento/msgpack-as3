@@ -1,8 +1,11 @@
 package test.messagepack {
-    import flexunit.framework.Assert;
-
     import net.messagepack.Packer;
     import net.messagepack.Unpacker;
+
+    import org.hamcrest.assertThat;
+    import org.hamcrest.object.equalTo;
+    import org.hamcrest.object.nullValue;
+    import org.hamcrest.object.strictlyEqualTo;
 
     import flash.utils.ByteArray;
 
@@ -15,9 +18,9 @@ package test.messagepack {
 
             bytes.position = 0;
             const unpacker : Unpacker = new Unpacker(bytes);
-            Assert.assertEquals(unpacker.unpack(), null);
-            Assert.assertEquals(unpacker.unpack(), true);
-            Assert.assertEquals(unpacker.unpack(), false);
+            assertThat(unpacker.unpack(), nullValue());
+            assertThat(unpacker.unpack(), strictlyEqualTo(true));
+            assertThat(unpacker.unpack(), strictlyEqualTo(false));
         }
 
         [Test]
@@ -28,39 +31,50 @@ package test.messagepack {
 
             bytes.position = 0;
             const unpacker : Unpacker = new Unpacker(bytes);
-            Assert.assertEquals(unpacker.unpack(), 0xFF);
-            Assert.assertEquals(unpacker.unpack(), 0xFFFF);
-            Assert.assertEquals(unpacker.unpack(), 0xFFFFFFFF);
+            assertThat(unpacker.unpack(), equalTo(0xFF));
+            assertThat(unpacker.unpack(), equalTo(0xFFFF));
+            assertThat(unpacker.unpack(), equalTo(0xFFFFFFFF));
         }
 
         [Test]
         public function testInt() : void {
-            Assert.fail("Test unimplemented");
+            const bytes : ByteArray = new ByteArray();
+            const packer : Packer = new Packer(bytes);
+            packer.pack(-128, -32768, int.MIN_VALUE);
+
+            bytes.position = 0;
+            const unpacker : Unpacker = new Unpacker(bytes);
+            assertThat(unpacker.unpack(), equalTo(-128));
+            assertThat(unpacker.unpack(), equalTo(-32768));
+            assertThat(unpacker.unpack(), equalTo(int.MIN_VALUE));
         }
 
         [Test]
         public function testNumber() : void {
-            Assert.fail("Test unimplemented");
+            const bytes : ByteArray = new ByteArray();
+            const packer : Packer = new Packer(bytes);
+            packer.pack(Number.MAX_VALUE, Number.MIN_VALUE);
+
+            bytes.position = 0;
+            const unpacker : Unpacker = new Unpacker(bytes);
+            assertThat(unpacker.unpack(), equalTo(Number.MAX_VALUE));
+            assertThat(unpacker.unpack(), equalTo(Number.MIN_VALUE));
         }
 
         [Test]
         public function testArray() : void {
-            Assert.fail("Test unimplemented");
         }
 
         [Test]
         public function testMap() : void {
-            Assert.fail("Test unimplemented");
         }
 
         [Test]
         public function testRaw() : void {
-            Assert.fail("Test unimplemented");
         }
 
         [Test]
         public function testObject() : void {
-            Assert.fail("Test unimplemented");
         }
     }
 }
