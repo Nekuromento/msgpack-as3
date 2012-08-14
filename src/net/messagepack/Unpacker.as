@@ -62,11 +62,11 @@ package net.messagepack {
                 return header;
             if ((header & 0xE0) == 0xE0)
                 return header & 0x1F;
-            if ((header & 0xE0) == 0xA0)
+            if ((header & 0xE0) == MessagePackTag.RAW)
                 return unpackRawImpl(header);
-            if ((header & 0xF0) == 0x90)
+            if ((header & 0xF0) == MessagePackTag.ARRAY)
                 return unpackArrayImpl(header);
-            if ((header & 0xF0) == 0x80)
+            if ((header & 0xF0) == MessagePackTag.MAP)
                 return unpackDictImpl(header);
         }
 

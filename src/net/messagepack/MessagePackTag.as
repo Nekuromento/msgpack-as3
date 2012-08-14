@@ -21,7 +21,7 @@ package net.messagepack {
         public static const ARRAY16 : uint = 0xDC;
         public static const ARRAY32 : uint = 0xDD;
 
-        public static const MAP : uint = 0xA0;
+        public static const MAP : uint = 0x80;
         public static const MAP16 : uint = 0xDE;
         public static const MAP32 : uint = 0xDF;
 

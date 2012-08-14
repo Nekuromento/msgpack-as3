@@ -2,12 +2,18 @@ package test.messagepack {
     import net.messagepack.Packer;
     import net.messagepack.Unpacker;
 
+    import com.adobe.utils.DictionaryUtil;
+
     import org.hamcrest.assertThat;
+    import org.hamcrest.collection.array;
+    import org.hamcrest.collection.arrayWithSize;
+    import org.hamcrest.core.isA;
     import org.hamcrest.object.equalTo;
     import org.hamcrest.object.nullValue;
     import org.hamcrest.object.strictlyEqualTo;
 
     import flash.utils.ByteArray;
+    import flash.utils.Dictionary;
 
     public class UnpackerTest {
         [Test]
@@ -63,10 +69,49 @@ package test.messagepack {
 
         [Test]
         public function testArray() : void {
+            const bytes : ByteArray = new ByteArray();
+            const packer : Packer = new Packer(bytes);
+            packer.pack([], [0, null, "test", true, false]);
+            packer.beginArray(17);
+            for (var i : uint = 0; i < 17; ++i)
+                packer.pack(i);
+
+            bytes.position = 0;
+            const unpacker : Unpacker = new Unpacker(bytes);
+            assertThat(unpacker.unpack(), nullValue());
+            assertThat(unpacker.unpack(), array(0, null, "test", true, false));
+            assertThat(unpacker.unpack(), arrayWithSize(17));
         }
 
         [Test]
         public function testMap() : void {
+            const bytes : ByteArray = new ByteArray();
+            const packer : Packer = new Packer(bytes);
+            const emptyDict : Dictionary = new Dictionary();
+            const dict : Dictionary = new Dictionary();
+            dict["foo"] = "bar";
+            dict[1] = 2;
+            packer.pack(emptyDict, dict);
+            packer.beginMap(17);
+            for (var i : uint = 0; i < 17; ++i) {
+                packer.pack(i.toString());
+                packer.pack(i);
+            }
+
+            bytes.position = 0;
+            const unpacker : Unpacker = new Unpacker(bytes);
+
+            assertThat(unpacker.unpack(), nullValue());
+
+            const secondResult : * = unpacker.unpack();
+            assertThat(secondResult, isA(Dictionary));
+            assertThat(DictionaryUtil.getKeys(secondResult), array(1, "foo"));
+            assertThat(DictionaryUtil.getValues(secondResult), array(2, "bar"));
+
+            const thirdResult : * = unpacker.unpack();
+            assertThat(thirdResult, isA(Dictionary));
+            assertThat(DictionaryUtil.getKeys(thirdResult), arrayWithSize(17));
+            assertThat(DictionaryUtil.getValues(thirdResult), arrayWithSize(17));
         }
 
         [Test]
