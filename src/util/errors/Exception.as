@@ -1,4 +1,4 @@
-package util {
+package util.errors {
     public class Exception extends Error {
         private var _cause : Error;
 
