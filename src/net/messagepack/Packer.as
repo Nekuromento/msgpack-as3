@@ -55,7 +55,7 @@ package net.messagepack {
             else if (value is IConvertableToMessagePack)
                 packObject(value);
             else
-                throw MessagePackError("Unsupported type");
+                throw new MessagePackException("Unsupported type");
         }
 
         public function beginRaw(length : uint) : Packer {

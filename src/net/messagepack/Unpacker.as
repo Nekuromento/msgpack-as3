@@ -340,16 +340,16 @@ package net.messagepack {
         }
 
         private function unsupportedType(type : String) : void {
-            throw new MessagePackError("Unsupported data type: " + type);
+            throw new MessagePackException("Unsupported data type: " + type);
         }
 
         private function checkBytesAvaliable(length : int) : void {
             if (_source.bytesAvailable < length)
-                throw new MessagePackError("Insufficient buffer: was " + _source.bytesAvailable + " expected " + length);
+                throw new MessagePackException("Insufficient buffer: was " + _source.bytesAvailable + " expected " + length);
         }
 
         private function unexpectedHeader(header : uint) : void {
-            throw new MessagePackError("Unexpected header: " + IntUtil.toHex(header, true));
+            throw new MessagePackException("Unexpected header: " + IntUtil.toHex(header, true));
         }
     }
 }
