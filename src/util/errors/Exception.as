@@ -13,7 +13,7 @@ package util.errors {
         }
 
         public function toString() : String {
-            var buf : String = getStackTrace();
+            var buf : String = name + ": " + message;
             if (_cause != null)
                 buf += "caused by: " + (cause is Exception
                                             ? String(cause)
