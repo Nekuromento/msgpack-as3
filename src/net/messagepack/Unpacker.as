@@ -69,6 +69,9 @@ package net.messagepack {
                 return unpackArrayImpl(header);
             if ((header & 0xF0) == MessagePackTag.MAP)
                 return unpackDictImpl(header);
+
+            throw new MessagePackException("Unknown header type");
+            return null;
         }
 
         public function unpackString() : String {
@@ -134,6 +137,8 @@ package net.messagepack {
             if (header == MessagePackTag.NIL)
                 return null;
             unexpectedHeader(header);
+
+            return null;
         }
 
         public function unpackBool() : Boolean {
