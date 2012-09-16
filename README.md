@@ -1,4 +1,4 @@
 msgpack-as3
 ===========
 
-MessagePack binary format implementation for Actionscript 3
+Message Pack binary format implementation for Actionscript 3
